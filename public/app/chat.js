@@ -79,6 +79,9 @@ function render() {
   badge.textContent = String(unread);
   panel.style.display = open ? "flex" : "none";
   if (!open) return;
+  const prevInput = panel.querySelector("#nc-input");
+  const draft = prevInput ? prevInput.value : "";
+  const wasFocused = prevInput && document.activeElement === prevInput;
 
   if (me.kind === "member") {
     activeConv = me.conversation;
@@ -86,7 +89,7 @@ function render() {
   } else {
     panel.innerHTML = shell("Member Live Chat", me.label) + (activeConv ? list(me) + composer() : inbox());
   }
-  wire(me);
+  wire(me, draft, wasFocused);
 }
 
 function shell(title, sub) {
@@ -146,7 +149,7 @@ function composer() {
     <button id="nc-send" style="background:${TEAL};color:#fff;border:none;border-radius:12px;width:40px;height:40px;font-size:15px;cursor:pointer;flex:none">➤</button></div>`;
 }
 
-function wire(me) {
+function wire(me, draft, wasFocused) {
   const q = (s) => panel.querySelector(s);
   q("#nc-close").onclick = () => { open = false; render(); };
   const back = q("#nc-back");
@@ -156,7 +159,8 @@ function wire(me) {
   });
   const input = q("#nc-input");
   if (input) {
-    input.focus();
+    input.value = draft || "";
+    if (wasFocused) input.focus();
     input.onkeydown = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(me); } };
     q("#nc-send").onclick = () => send(me);
   }
