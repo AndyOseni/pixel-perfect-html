@@ -14,7 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      chat_messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          member_name: string | null
+          member_number: string | null
+          read_by_trustee: boolean
+          sender_name: string
+          sender_role: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          member_name?: string | null
+          member_number?: string | null
+          read_by_trustee?: boolean
+          sender_name: string
+          sender_role: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          member_name?: string | null
+          member_number?: string | null
+          read_by_trustee?: boolean
+          sender_name?: string
+          sender_role?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
