@@ -67,7 +67,7 @@ function mount() {
   panel = root.querySelector("#nc-panel");
   launcher = root.querySelector("#nc-launcher");
   badge = root.querySelector("#nc-badge");
-  launcher.addEventListener("click", () => { open = !open; if (open) { unread = 0; } render(); });
+  launcher.addEventListener("click", () => { open = !open; if (open) { unread = 0; stopFlash(); } render(); });
 }
 
 function render() {
