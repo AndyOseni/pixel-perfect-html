@@ -67,7 +67,7 @@ function mount() {
   panel = root.querySelector("#nc-panel");
   launcher = root.querySelector("#nc-launcher");
   badge = root.querySelector("#nc-badge");
-  launcher.addEventListener("click", () => { open = !open; if (open) { unread = 0; } render(); });
+  launcher.addEventListener("click", () => { open = !open; if (open) { unread = 0; stopFlash(); } render(); });
 }
 
 function render() {
@@ -201,10 +201,100 @@ function upsert(row) {
   msgs.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 }
 
+/* ---------- in-app notifications ---------- */
+let seen = new Set(), toastWrap = null, baseTitle = document.title, titleTimer = null;
+
+function toastHost() {
+  if (toastWrap) return toastWrap;
+  toastWrap = document.createElement("div");
+  toastWrap.style.cssText =
+    "position:fixed;right:16px;bottom:86px;z-index:2147483001;display:flex;flex-direction:column;gap:8px;align-items:flex-end;font-family:inherit;pointer-events:none";
+  document.body.appendChild(toastWrap);
+  return toastWrap;
+}
+
+function chime() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "sine"; o.frequency.value = 880;
+    g.gain.setValueAtTime(0.06, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+    o.connect(g).connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + 0.36);
+    setTimeout(() => ctx.close(), 600);
+  } catch {}
+}
+
+function flashTitle() {
+  if (titleTimer) return;
+  let on = true;
+  titleTimer = setInterval(() => {
+    document.title = on ? "💬 New message — " + baseTitle : baseTitle;
+    on = !on;
+  }, 1200);
+}
+function stopFlash() {
+  if (titleTimer) { clearInterval(titleTimer); titleTimer = null; }
+  document.title = baseTitle;
+}
+
+function toast(row, me) {
+  const host = toastHost();
+  const who = me.kind === "trustee" ? `${row.member_name || "Member"}${row.member_number ? ` (${row.member_number})` : ""}` : row.sender_name;
+  const el = document.createElement("div");
+  el.style.cssText =
+    "pointer-events:auto;max-width:300px;background:#fff;border:1px solid #e5e7eb;border-left:4px solid " +
+    TEAL +
+    ";border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.18);padding:10px 12px;cursor:pointer;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s";
+  el.innerHTML = `<div style="font-size:11px;color:${TEAL};font-weight:700;margin-bottom:2px">New chat message</div>
+    <div style="font-size:12px;font-weight:600;color:#0f172a">${esc(who)}</div>
+    <div style="font-size:12px;color:#475569;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(row.body)}</div>`;
+  el.onclick = () => {
+    open = true;
+    unread = 0;
+    if (me.kind === "trustee") activeConv = row.conversation_id;
+    stopFlash();
+    el.remove();
+    render();
+  };
+  host.appendChild(el);
+  requestAnimationFrame(() => { el.style.opacity = "1"; el.style.transform = "none"; });
+  setTimeout(() => {
+    el.style.opacity = "0";
+    setTimeout(() => el.remove(), 250);
+  }, 7000);
+}
+
+/* Returns true if the row should notify the current identity */
+function isForMe(row, me) {
+  return me.kind === "member"
+    ? row.conversation_id === me.conversation && row.sender_role === "trustee"
+    : row.sender_role === "member";
+}
+
+function notifyNew(rows) {
+  const me = identity();
+  if (!me) return;
+  const fresh = rows.filter((r) => r && !seen.has(r.id));
+  rows.forEach((r) => r && seen.add(r.id));
+  const relevant = fresh.filter((r) => isForMe(r, me));
+  if (!relevant.length) return;
+  const hidden = !open || (me.kind === "trustee" && relevant.every((r) => r.conversation_id !== activeConv));
+  if (!hidden) return;
+  unread += relevant.length;
+  toast(relevant[relevant.length - 1], me);
+  chime();
+  flashTitle();
+}
+
 /* ---------- data + realtime ---------- */
-async function load() {
+async function load(notify = true) {
   const { data } = await db.from("chat_messages").select("*").order("created_at", { ascending: true }).limit(1000);
   msgs = data || [];
+  if (notify) notifyNew(msgs); else msgs.forEach((m) => seen.add(m.id));
 }
 
 function teardown() { if (channel) { db.removeChannel(channel); channel = null; } }
@@ -216,18 +306,16 @@ function subscribe() {
     .on("postgres_changes", { event: "*", schema: "public", table: "chat_messages" }, (p) => {
       const row = p.new;
       upsert(row);
-      const me = identity();
-      if (me && row && p.eventType === "INSERT") {
-        const forMe = me.kind === "member" ? row.conversation_id === me.conversation && row.sender_role === "trustee" : row.sender_role === "member";
-        if (forMe && (!open || (me.kind === "trustee" && activeConv !== row.conversation_id))) unread++;
-      }
+      if (p.eventType === "INSERT") notifyNew([row]);
+      else if (row) seen.add(row.id);
       render();
     })
     .subscribe();
 }
 
 mount();
-await load();
+await load(false);
 subscribe();
 render();
 setInterval(async () => { if (identity()) { await load(); render(); } }, 30000);
+
