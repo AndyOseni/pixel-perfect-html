@@ -127,7 +127,7 @@ async function syncToSupabase(key, value){
         payslip_date: m.payslipDate || null,
         payslip_data_url: m.payslipDataUrl || null,
       }))
-      await Promise.all(rows.map(r=>window.__nutUpdateMember(r.id, r)))
+      await Promise.all(rows.map(async r=>{ await window.__nutUpdateMember(r.id, r); await window.__nutUpdateSavings(r.id, r.total_savings, r.monthly_savings) }))
     }
     if(key === 'nut_loans' || key === 'nut_etiosa_loans'){
       const rows = data.map(l => ({
@@ -476,7 +476,7 @@ async function syncToSupabase(key, value){
       })) }
     if(!table) return
     if(table==='members'){
-      if(navigator.onLine){ await Promise.all(rows.map(r=>window.__nutUpdateMember(r.id, r))) }
+      if(navigator.onLine){ await Promise.all(rows.map(async r=>{ await window.__nutUpdateMember(r.id, r); await window.__nutUpdateSavings(r.id, r.total_savings, r.monthly_savings) })) }
       else { enqueue({table, rows}) }
       return
     }
