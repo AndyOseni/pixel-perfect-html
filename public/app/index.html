@@ -70,15 +70,20 @@ window.__nutUpdateMember = function(memberId, updates){
 window.__nutUpdateSavings = function(memberId, total_savings, monthly_savings){
   return window.__nutAdminUpdateMember({ action:'update-savings', memberId, total_savings: Number(total_savings)||0, monthly_savings: Number(monthly_savings)||0 })
 }
+const __nutIsUuid = v => typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v)
 window.__nutApproveGuarantor = function(requestId){
+  if(!__nutIsUuid(requestId)) return Promise.resolve({ skipped:true })
   return window.__nutAdminUpdateMember({ action:'approve-guarantor', requestId })
 }
 window.__nutDeclineGuarantor = function(requestId){
+  if(!__nutIsUuid(requestId)) return Promise.resolve({ skipped:true })
   return window.__nutAdminUpdateMember({ action:'decline-guarantor', requestId })
 }
 window.__nutApplyCommodity = function(memberId, itemId){
+  if(!__nutIsUuid(memberId) || !__nutIsUuid(itemId)) return Promise.resolve({ skipped:true })
   return window.__nutAdminUpdateMember({ action:'apply-commodity', memberId, itemId })
 }
+
 
 
 
