@@ -61,6 +61,25 @@ window.__nutAdminUpdateMember = async function(payload){
   try{ return await edgeCall('admin-update-member', payload) }
   catch(e){ console.warn('admin-update-member failed', e.message); return { error: e.message } }
 }
+window.__nutChangePin = function(employerNumber, oldPin, newPin){
+  return window.__nutAdminUpdateMember({ action:'change-pin', employerNumber:String(employerNumber||'').trim(), oldPin:String(oldPin||'').trim(), newPin:String(newPin||'').trim() })
+}
+window.__nutUpdateMember = function(memberId, updates){
+  return window.__nutAdminUpdateMember({ action:'update-member', memberId, updates })
+}
+window.__nutUpdateSavings = function(memberId, total_savings, monthly_savings){
+  return window.__nutAdminUpdateMember({ action:'update-savings', memberId, total_savings: Number(total_savings)||0, monthly_savings: Number(monthly_savings)||0 })
+}
+window.__nutApproveGuarantor = function(requestId){
+  return window.__nutAdminUpdateMember({ action:'approve-guarantor', requestId })
+}
+window.__nutDeclineGuarantor = function(requestId){
+  return window.__nutAdminUpdateMember({ action:'decline-guarantor', requestId })
+}
+window.__nutApplyCommodity = function(memberId, itemId){
+  return window.__nutAdminUpdateMember({ action:'apply-commodity', memberId, itemId })
+}
+
 
 
 // Helper: upload payslip to storage
