@@ -11,7 +11,7 @@ Two clearly separated entrances, same features as today:
 - A small "Staff sign-in" link at the foot of the member sign-in page and a "Member portal" link on the admin sign-in page, so nobody gets stuck.
 - Member mode no longer sticks to the tab: each address always shows its own portal, even after refresh.
 
-The member portal also becomes installable on a phone home screen (app name, icon, splash colours) so members can open it like an app.
+Both portals also become installable on a phone home screen (app name, icon, splash colours) and keep working offline: the app opens without internet and shows the last information it had, with saving and messages resuming once the connection returns.
 
 ## What stays the same
 
