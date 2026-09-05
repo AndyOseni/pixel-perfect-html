@@ -1,18 +1,28 @@
-# Bring back the staff (admin) sign-in page
+# Two separate portals: members and admin
 
-## What's happening
+Right now one page holds both sign-ins, and once you visit the member address the browser tab keeps showing the member portal even at the old address — that's why the admin sign-in disappeared.
 
-Once you open the member address, the app remembers "member mode" for the rest of that browser tab. So when you go back to the normal page, it still opens as the member portal with the staff sign-in hidden.
+## What you'll get
 
-## The fix
+Two clearly separated entrances, same features as today:
 
-1. Member mode only applies when you actually arrive from the member address. Opening the normal page directly always clears member mode and shows both **Member** and **Admin** sign-in choices again.
-2. Add a small "Staff sign-in" link at the bottom of the member sign-in screen, so anyone stuck in the member portal can get back to the normal page in one click.
-3. Member mode still survives page refreshes while you stay inside the member portal, so members are not thrown out mid-session.
+- **Member portal** — the main address (`/`). Opens straight into member sign-in: overview and balance, loan eligibility (2 x savings minus outstanding), savings history, my loans and loan application, guarantor requests, commodity requests, profile and change PIN, Messages page plus the chat bubble. No staff sign-in anywhere on it.
+- **Admin portal** — its own address (`/admin`). Opens straight into staff sign-in with the full admin console: members register, savings and Oracle deduction status, loans, commodity orders, deduction schedules, reports and printing, settings and trustees, and the trustee chat inbox.
+- A small "Staff sign-in" link at the foot of the member sign-in page and a "Member portal" link on the admin sign-in page, so nobody gets stuck.
+- Member mode no longer sticks to the tab: each address always shows its own portal, even after refresh.
+
+The member portal also becomes installable on a phone home screen (app name, icon, splash colours) so members can open it like an app.
+
+## What stays the same
+
+All screens, calculations, data and secure sign-in behaviour are untouched — this is a split of the entrances, not a rewrite of the features.
 
 ## Technical notes
 
-- In `public/app/portal.js`: keep the `?portal=member` flag sticky per tab, but clear `sessionStorage.nut_portal` when the page is loaded without the flag and without a member session already signed in.
-- Append the flag to the URL (history.replaceState) after activation so refreshes inside the portal keep working.
-- Add the escape link into the login card, pointing at `./index.html` with member mode cleared.
-- Verify with a browser run: `/member` shows member-only sign-in; `/app/index.html` shows Member + Admin pills and admin/admin123 reaches the admin console.
+- Keep one shared app engine (`public/app/index.html` plus `chat.js`) as the single source of truth for all screens, so member and admin views can never drift apart. Instead of duplicating the 578-line file into `admin/index.html`, add a mode flag resolved at load: `portal=member` or `portal=admin`.
+- Routes: `src/routes/index.tsx` -> member mode; new `src/routes/admin.tsx` -> admin mode; keep `/member` as an alias of `/`.
+- Rewrite `public/app/portal.js` into a two-mode shell: read the mode from the URL (not sticky session state), stamp `data-nut-portal`, hide the opposite login pill, auto-select the right one, block the other console view, and inject the Messages tab only in member mode. Add the cross-links.
+- Add `public/manifest.webmanifest` plus `icon-192.png` / `icon-512.png` and the manifest/theme-color/apple-touch-icon head tags for member installability. No service worker and no offline caching unless you want the portal to work without internet — say the word and I'll add it with the guarded setup.
+- Verify with a browser run: `/` shows member-only sign-in and 1234567 / 4321 works; `/admin` shows staff sign-in and admin/admin123 reaches the console; neither address leaks the other's sign-in after refresh.
+
+One question folded in: if you want members to keep using the portal offline (see last balance with no network), tell me and I'll include that; otherwise it stays online-only but installable.
