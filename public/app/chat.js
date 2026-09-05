@@ -22,6 +22,34 @@ let session = null; // {role:'member'|'admin', id, name, employerNumber}
 window.__nutSetSession = (s) => { session = s; render(); };
 window.__nutClearSession = () => { session = null; render(); };
 
+/* ---------- helpers for the member portal Messages page ---------- */
+window.__nutChatMessages = async () => {
+  const me = identity();
+  if (!me || me.kind !== "member") return null;
+  await load(false);
+  return msgs.filter((m) => m.conversation_id === me.conversation);
+};
+window.__nutChatSend = async (text) => {
+  const me = identity();
+  if (!me || me.kind !== "member") return { error: "Not signed in" };
+  const row = {
+    conversation_id: me.conversation,
+    member_number: me.memberNumber,
+    member_name: me.memberName,
+    sender_role: "member",
+    sender_name: me.label,
+    body: String(text || "").trim(),
+  };
+  if (!row.body) return { error: "Empty message" };
+  const { data, error } = await db.from("chat_messages").insert(row).select().single();
+  if (error) return { error: error.message };
+  upsert(data);
+  seen.add(data.id);
+  render();
+  return { ok: true };
+};
+window.__nutChatOpen = () => { open = true; unread = 0; stopFlash(); render(); };
+
 function trusteeIds() {
   const t = readLS("nut_trustees", {}) || {};
   return [t.president, t.treasurer, t.secretary].filter(Boolean);
@@ -308,6 +336,7 @@ function subscribe() {
       upsert(row);
       if (p.eventType === "INSERT") notifyNew([row]);
       else if (row) seen.add(row.id);
+      if (window.__nutPortalRefreshMessages) window.__nutPortalRefreshMessages();
       render();
     })
     .subscribe();
