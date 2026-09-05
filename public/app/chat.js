@@ -336,6 +336,7 @@ function subscribe() {
       upsert(row);
       if (p.eventType === "INSERT") notifyNew([row]);
       else if (row) seen.add(row.id);
+      if (window.__nutPortalRefreshMessages) window.__nutPortalRefreshMessages();
       render();
     })
     .subscribe();
