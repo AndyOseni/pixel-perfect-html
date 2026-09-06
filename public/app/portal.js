@@ -1,19 +1,59 @@
-/* NUT Eti-Osa COOP — Member-only portal shell.
-   Activated at /member (redirects to ./index.html?portal=member).
-   Hides the admin sign-in entirely and adds a full-page Messages view
-   for the signed-in member. All other member features are untouched. */
+/* NUT Eti-Osa COOP — portal shell.
+   Two modes, resolved from the URL only (never sticky):
+     ?portal=member  -> member-only portal (served at /  and /member)
+     ?portal=admin   -> admin-only portal  (served at /admin)
+   With no flag the page behaves exactly as before (both sign-ins).
+   Member mode also gets a full-page Messages view. */
 (function () {
   var params = new URLSearchParams(location.search);
-  if (params.get("portal") === "member") sessionStorage.setItem("nut_portal", "member");
-  if (sessionStorage.getItem("nut_portal") !== "member") return;
+  var MODE = params.get("portal");
+  if (MODE !== "member" && MODE !== "admin") MODE = null;
 
-  document.documentElement.setAttribute("data-nut-portal", "member");
+  /* legacy sticky flag from the first version — remove it so the plain
+     page never gets locked into the member portal */
+  try { sessionStorage.removeItem("nut_portal"); } catch (e) {}
+
+  /* ---------- offline / installable ---------- */
+  (function registerServiceWorker() {
+    if (!("serviceWorker" in navigator)) return;
+    var h = location.hostname;
+    var blocked =
+      params.get("sw") === "off" ||
+      window.top !== window.self ||
+      h === "localhost" ||
+      h === "127.0.0.1" ||
+      h.indexOf("id-preview--") === 0 ||
+      h.indexOf("preview--") === 0 ||
+      h === "lovableproject.com" ||
+      /\.lovableproject\.com$/.test(h) ||
+      h === "lovableproject-dev.com" ||
+      /\.lovableproject-dev\.com$/.test(h) ||
+      h === "beta.lovable.dev" ||
+      /\.beta\.lovable\.dev$/.test(h);
+    if (blocked) {
+      navigator.serviceWorker.getRegistrations().then(function (rs) {
+        rs.forEach(function (r) {
+          var url = (r.active && r.active.scriptURL) || (r.installing && r.installing.scriptURL) || "";
+          if (url.indexOf("/sw.js") !== -1) r.unregister();
+        });
+      });
+      return;
+    }
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("/sw.js").catch(function () {});
+    });
+  })();
+
+  if (!MODE) return;
+
+  document.documentElement.setAttribute("data-nut-portal", MODE);
 
   var style = document.createElement("style");
-  style.textContent = '[data-nut-portal="member"] .nut-hide{display:none !important}';
+  style.textContent = '[data-nut-portal] .nut-hide{display:none !important}';
   document.head.appendChild(style);
 
   var TEAL = "#0f766e";
+  var MEMBER = MODE === "member";
 
   function loginPills() {
     return Array.prototype.filter.call(document.querySelectorAll("div.inline-flex"), function (d) {
@@ -23,18 +63,36 @@
   }
 
   var switched = false;
-  function enforceMemberLogin() {
+  function enforceLoginMode() {
     var pills = loginPills();
-    if (!pills) return;
+    if (!pills) { switched = false; return; }
     var btns = pills.querySelectorAll("button");
-    btns[1].classList.add("nut-hide");
-    if (!switched && btns[0].className.indexOf("bg-[#0f766e]") === -1) {
+    var keep = MEMBER ? btns[0] : btns[1];
+    var drop = MEMBER ? btns[1] : btns[0];
+    drop.classList.add("nut-hide");
+    keep.classList.remove("nut-hide");
+    if (!switched && keep.className.indexOf("bg-[#0f766e]") === -1) {
       switched = true;
-      btns[0].click();
+      keep.click();
     }
+    addCrossLink(pills);
   }
 
-  /* ---------- Messages view ---------- */
+  function addCrossLink(pills) {
+    var card = pills.closest("div.bg-white") || pills.parentElement;
+    if (!card || card.querySelector("#nut-cross-link")) return;
+    var wrap = document.createElement("div");
+    wrap.id = "nut-cross-link";
+    wrap.style.cssText = "margin-top:14px;text-align:center;font-size:12px;color:#64748b";
+    var a = document.createElement("a");
+    a.href = MEMBER ? "/admin" : "/";
+    a.textContent = MEMBER ? "Staff sign-in" : "Member portal";
+    a.style.cssText = "color:" + TEAL + ";font-weight:700;text-decoration:none";
+    wrap.appendChild(a);
+    card.appendChild(wrap);
+  }
+
+  /* ---------- Messages view (member mode only) ---------- */
   function memberNav() {
     return Array.prototype.filter.call(document.querySelectorAll("div.flex.gap-2"), function (d) {
       var b = d.querySelectorAll(":scope > button");
@@ -135,8 +193,8 @@
   }
 
   function tick() {
-    enforceMemberLogin();
-    addMessagesTab();
+    enforceLoginMode();
+    if (MEMBER) addMessagesTab();
   }
 
   new MutationObserver(tick).observe(document.documentElement, { childList: true, subtree: true });
