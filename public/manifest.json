@@ -1,7 +1,7 @@
 {
-  "name": "NUT Eti-Osa COOP",
-  "short_name": "NUT Eti-Osa",
-  "description": "NUT Eti-Osa Cooperative member portal: savings, loans, commodities and trustee messages.",
+  "name": "KS COOP",
+  "short_name": "KS COOP",
+  "description": "KS COOP member portal: savings, loans, commodities and trustee messages.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
