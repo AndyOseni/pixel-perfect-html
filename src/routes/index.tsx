@@ -3,24 +3,25 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "NUT Eti-Osa COOP" },
+      { title: "NUT Eti-Osa COOP — Member Portal" },
       {
         name: "description",
         content:
-          "NUT Eti-Osa Cooperative portal for members, savings, loans and commodity orders.",
+          "Members sign in to view savings, loan eligibility, commodity requests and messages with the NUT Eti-Osa trustees.",
       },
-      { property: "og:title", content: "NUT Eti-Osa COOP" },
+      { property: "og:title", content: "NUT Eti-Osa COOP — Member Portal" },
       {
         property: "og:description",
         content:
-          "Manage cooperative members, savings, loans and commodity orders for NUT Eti-Osa.",
+          "Check your savings, loan eligibility, commodity requests and trustee messages in the NUT Eti-Osa member portal.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   beforeLoad: () => {
-    throw redirect({ href: "/app/index.html" });
+    throw redirect({ href: "/app/index.html?portal=member" });
   },
+
   component: () => null,
 });
