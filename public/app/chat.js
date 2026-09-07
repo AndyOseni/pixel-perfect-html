@@ -7,6 +7,14 @@ const CHAT_URL = "https://urvgfaparanfrzwbaerl.supabase.co";
 const CHAT_KEY = "sb_publishable_SMw8GXgXF2eyWQgI9SHNuw_IA-khkBz";
 const db = createClient(CHAT_URL, CHAT_KEY, { auth: { persistSession: false } });
 
+/* TODO: deploy chat-get-messages / chat-send-message edge functions, then route this
+   widget through them (with 5s polling instead of realtime) and set this to true.
+   Until then the widget stays hidden — direct table access would expose every
+   member's private conversation. */
+const CHAT_ENABLED = false;
+window.__nutChatEnabled = CHAT_ENABLED;
+
+
 const TEAL = "#0f766e";
 const esc = (s) =>
   String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -65,7 +73,9 @@ function members() { return readLS("nut_etiosa_members", null) || readLS("nut_me
 
 /* Who am I in the chat? */
 function identity() {
+  if (!CHAT_ENABLED) return null;
   if (!session) return null;
+
   if (session.role === "admin") return { kind: "trustee", label: "Admin (Secretariat)" };
   const role = trusteeRoleFor(session.id);
   if (role) return { kind: "trustee", label: `${session.name} (${role})` };
@@ -342,9 +352,14 @@ function subscribe() {
     .subscribe();
 }
 
-mount();
-await load(false);
-subscribe();
-render();
-setInterval(async () => { if (identity()) { await load(); render(); } }, 30000);
+if (CHAT_ENABLED) {
+  mount();
+  await load(false);
+  subscribe();
+  render();
+  setInterval(async () => { if (identity()) { await load(); render(); } }, 30000);
+} else {
+  document.getElementById("nut-chat-root")?.remove();
+}
+
 
