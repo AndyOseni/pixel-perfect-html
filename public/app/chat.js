@@ -73,7 +73,9 @@ function members() { return readLS("nut_etiosa_members", null) || readLS("nut_me
 
 /* Who am I in the chat? */
 function identity() {
+  if (!CHAT_ENABLED) return null;
   if (!session) return null;
+
   if (session.role === "admin") return { kind: "trustee", label: "Admin (Secretariat)" };
   const role = trusteeRoleFor(session.id);
   if (role) return { kind: "trustee", label: `${session.name} (${role})` };
