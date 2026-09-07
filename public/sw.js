@@ -46,10 +46,13 @@ function isStaticAsset(url) {
 
 self.addEventListener("fetch", function (event) {
   var req = event.request;
+  /* never cache backend, service or file traffic — network only */
+  if (req.url.indexOf("supabase.co") !== -1 || req.url.indexOf("/functions/v1/") !== -1 || req.url.indexOf("/storage/") !== -1) return;
   if (req.method !== "GET") return;
   var url = new URL(req.url);
   if (url.pathname.indexOf("/~oauth") === 0) return;
   if (url.searchParams.get("sw") === "off") return;
+
 
   /* HTML navigations: network first, fall back to the cached page */
   if (req.mode === "navigate") {
