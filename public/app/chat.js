@@ -352,9 +352,14 @@ function subscribe() {
     .subscribe();
 }
 
-mount();
-await load(false);
-subscribe();
-render();
-setInterval(async () => { if (identity()) { await load(); render(); } }, 30000);
+if (CHAT_ENABLED) {
+  mount();
+  await load(false);
+  subscribe();
+  render();
+  setInterval(async () => { if (identity()) { await load(); render(); } }, 30000);
+} else {
+  document.getElementById("nut-chat-root")?.remove();
+}
+
 
