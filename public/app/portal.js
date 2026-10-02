@@ -194,7 +194,8 @@
 
   function tick() {
     enforceLoginMode();
-    if (MEMBER) addMessagesTab();
+    if (MEMBER && window.__nutChatEnabled) addMessagesTab();
+    else { var t = document.getElementById("nut-msg-tab"); if (t) t.remove(); }
   }
 
   new MutationObserver(tick).observe(document.documentElement, { childList: true, subtree: true });
