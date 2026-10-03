@@ -55,6 +55,120 @@
   var TEAL = "#0f766e";
   var MEMBER = MODE === "member";
 
+  var dashboardCss = document.createElement("link");
+  dashboardCss.rel = "stylesheet";
+  dashboardCss.href = "/app/dashboard.css";
+  document.head.appendChild(dashboardCss);
+
+  var navIcons = {
+    "Dashboard": "▦", "Overview": "▦", "Members": "♙", "Savings": "◇",
+    "Savings History": "◇", "Deductions": "≋", "Commodity Store": "□",
+    "Loans": "◎", "My Loans": "◎", "Requests": "!", "Guarantor Requests": "!",
+    "Oracle Import": "⇩", "Reports": "▤", "Settings": "⚙",
+    "Profile / Change PIN": "⚙"
+  };
+
+  function navLabel(button) {
+    var clone = button.cloneNode(true);
+    Array.prototype.forEach.call(clone.querySelectorAll(".nut-nav-icon"), function (x) { x.remove(); });
+    return clone.textContent.trim().replace(/\s*\(\d+\)$/, "");
+  }
+
+  function addNavIcons(nav) {
+    Array.prototype.forEach.call(nav.children, function (button) {
+      if (button.tagName !== "BUTTON" || button.querySelector(".nut-nav-icon")) return;
+      var label = navLabel(button);
+      var icon = document.createElement("span");
+      icon.className = "nut-nav-icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.textContent = navIcons[label] || "•";
+      button.insertBefore(icon, button.firstChild);
+    });
+  }
+
+  function activeNav(nav) {
+    Array.prototype.forEach.call(nav.querySelectorAll(":scope > button"), function (button) {
+      var active = button.className.indexOf("bg-[#0f766e]") !== -1 || button.className.indexOf("bg-gray-900") !== -1;
+      button.classList.toggle("nut-active-nav", active);
+    });
+  }
+
+  function addMobileMenu(header) {
+    if (header.querySelector(".nut-mobile-menu")) return;
+    var inner = header.firstElementChild;
+    if (!inner) return;
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "nut-mobile-menu";
+    button.setAttribute("aria-label", "Open menu");
+    button.setAttribute("aria-expanded", "false");
+    button.textContent = "☰";
+    button.onclick = function () {
+      var open = document.body.classList.toggle("nut-nav-open");
+      button.setAttribute("aria-expanded", String(open));
+      button.textContent = open ? "×" : "☰";
+    };
+    inner.appendChild(button);
+  }
+
+  function decorateDashboard() {
+    var root = document.querySelector("#root > div");
+    if (!root) return;
+    var header = root.querySelector(":scope > header");
+    var main = root.querySelector(":scope > div.max-w-\\[1320px\\]");
+    var footer = root.querySelector(":scope > footer");
+    if (!header || !main || !main.querySelector("button")) return;
+
+    var logout = Array.prototype.filter.call(header.querySelectorAll("button"), function (b) {
+      return b.textContent.trim() === "Logout";
+    })[0];
+    if (!logout) return;
+
+    var nav = MEMBER ? memberNav() : main.firstElementChild;
+    if (!nav || nav.querySelectorAll(":scope > button").length < 4) return;
+
+    root.classList.add("nut-dashboard-shell");
+    header.classList.add("nut-shell-header");
+    main.classList.add("nut-shell-main");
+    nav.classList.add("nut-side-nav");
+    if (footer) footer.classList.add("nut-shell-footer");
+    if (logout.parentElement) logout.parentElement.classList.add("nut-header-actions");
+    addNavIcons(nav);
+    activeNav(nav);
+    addMobileMenu(header);
+
+    Array.prototype.forEach.call(nav.querySelectorAll(":scope > button"), function (button) {
+      if (button.dataset.nutBound) return;
+      button.dataset.nutBound = "1";
+      button.addEventListener("click", function () {
+        document.body.classList.remove("nut-nav-open");
+        setTimeout(function () { activeNav(nav); decorateDashboard(); }, 0);
+      });
+    });
+
+    var children = Array.prototype.filter.call(main.children, function (x) { return x !== nav; });
+    if (MEMBER) {
+      if (children[0]) {
+        children[0].classList.add("nut-view-heading");
+        var titleBox = children[0].firstElementChild;
+        if (titleBox && !titleBox.querySelector(".nut-page-kicker")) {
+          var kicker = document.createElement("div");
+          kicker.className = "nut-page-kicker";
+          kicker.textContent = "Here is your cooperative overview for today";
+          titleBox.appendChild(kicker);
+        }
+      }
+      if (children[1]) children[1].classList.add("nut-metric-grid");
+      if (children[2]) children[2].classList.add("nut-view-panel");
+    } else {
+      if (children[0]) {
+        children[0].classList.add("nut-content-card");
+        var cardHead = children[0].firstElementChild;
+        if (cardHead) cardHead.classList.add("nut-view-heading");
+      }
+    }
+  }
+
   function loginPills() {
     return Array.prototype.filter.call(document.querySelectorAll("div.inline-flex"), function (d) {
       var b = d.querySelectorAll("button");
@@ -196,6 +310,7 @@
     enforceLoginMode();
     if (MEMBER && window.__nutChatEnabled) addMessagesTab();
     else { var t = document.getElementById("nut-msg-tab"); if (t) t.remove(); }
+    decorateDashboard();
   }
 
   new MutationObserver(tick).observe(document.documentElement, { childList: true, subtree: true });

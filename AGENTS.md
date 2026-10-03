@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Extend the legacy prebundled portal through progressive DOM decoration and scoped CSS, because its authored React source is not present.

@@ -1,0 +1,284 @@
+:root {
+  --nut-primary: #004c54;
+  --nut-accent: #00d9d2;
+  --nut-ink: #0b2742;
+  --nut-canvas: #f3f6f7;
+  --nut-line: #dfe7e9;
+  --nut-muted: #60717f;
+  --nut-white: #ffffff;
+}
+
+.nut-dashboard-shell {
+  min-height: 100vh !important;
+  background: var(--nut-canvas) !important;
+  color: var(--nut-ink) !important;
+}
+
+.nut-dashboard-shell .nut-shell-header {
+  position: fixed !important;
+  inset: 0 auto 0 0 !important;
+  z-index: 35 !important;
+  width: 276px !important;
+  height: 100vh !important;
+  border: 0 !important;
+  border-radius: 0 24px 24px 0;
+  background: var(--nut-primary) !important;
+  box-shadow: none !important;
+  color: var(--nut-white) !important;
+  overflow: hidden;
+}
+
+.nut-dashboard-shell .nut-shell-header > div {
+  width: 100% !important;
+  height: auto !important;
+  padding: 28px 26px 20px !important;
+  margin: 0 !important;
+  align-items: flex-start !important;
+}
+
+.nut-dashboard-shell .nut-shell-header img {
+  width: 44px !important;
+  height: 44px !important;
+  padding: 5px;
+  border-radius: 10px !important;
+  background: var(--nut-accent);
+}
+
+.nut-dashboard-shell .nut-shell-header .leading-tight > div:first-child {
+  max-width: 170px;
+  color: var(--nut-white) !important;
+  font-size: 15px !important;
+  line-height: 1.15 !important;
+}
+
+.nut-dashboard-shell .nut-shell-header .leading-tight > div:last-child {
+  max-width: 170px;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.68) !important;
+  font-size: 10px !important;
+}
+
+.nut-dashboard-shell .nut-header-actions > :not(button) { display: none !important; }
+.nut-dashboard-shell .nut-header-actions { position: static !important; }
+.nut-dashboard-shell .nut-header-actions button {
+  position: fixed !important;
+  left: 28px;
+  bottom: 28px;
+  z-index: 38;
+  width: 220px;
+  justify-content: flex-start !important;
+  padding: 11px 14px !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: var(--nut-white) !important;
+  box-shadow: none !important;
+}
+
+.nut-dashboard-shell .nut-shell-main {
+  width: auto !important;
+  max-width: none !important;
+  min-height: calc(100vh - 58px);
+  margin: 0 0 0 276px !important;
+  padding: 34px 36px 48px !important;
+}
+
+.nut-dashboard-shell .nut-side-nav {
+  position: fixed !important;
+  left: 20px;
+  top: 142px;
+  z-index: 37;
+  display: flex !important;
+  width: 236px;
+  max-height: calc(100vh - 232px);
+  margin: 0 !important;
+  padding: 0 !important;
+  flex-direction: column;
+  gap: 5px !important;
+  overflow: auto !important;
+}
+
+.nut-dashboard-shell .nut-side-nav::before {
+  content: "MENU";
+  padding: 0 12px 8px;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.nut-dashboard-shell .nut-side-nav > button {
+  display: grid !important;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+  box-shadow: none !important;
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  text-align: left;
+  white-space: normal !important;
+}
+
+.nut-dashboard-shell .nut-side-nav > button:hover { background: rgba(255, 255, 255, 0.1) !important; }
+.nut-dashboard-shell .nut-side-nav > button.nut-active-nav {
+  background: var(--nut-accent) !important;
+  color: var(--nut-ink) !important;
+}
+
+.nut-nav-icon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.nut-dashboard-shell .nut-view-heading {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center !important;
+  gap: 20px !important;
+  margin: 0 0 24px !important;
+}
+
+.nut-dashboard-shell .nut-view-heading h1,
+.nut-dashboard-shell .nut-view-heading h2,
+.nut-dashboard-shell .nut-content-card > div:first-child > h2 {
+  color: var(--nut-ink) !important;
+  font-size: 30px !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+}
+
+.nut-page-kicker {
+  margin-top: 6px;
+  color: var(--nut-muted);
+  font-size: 14px;
+}
+
+.nut-dashboard-shell .nut-metric-grid {
+  margin-top: 0 !important;
+  gap: 16px !important;
+}
+
+.nut-dashboard-shell .nut-metric-grid > div,
+.nut-dashboard-shell .nut-content-card,
+.nut-dashboard-shell .nut-view-panel {
+  border: 1px solid var(--nut-line) !important;
+  border-radius: 8px !important;
+  background: var(--nut-white) !important;
+  box-shadow: 0 8px 20px rgba(11, 39, 66, 0.07) !important;
+}
+
+.nut-dashboard-shell .nut-metric-grid > div { min-height: 146px; padding: 20px !important; }
+.nut-dashboard-shell .nut-metric-grid > div:last-child {
+  border-color: var(--nut-primary) !important;
+  background: var(--nut-primary) !important;
+  color: var(--nut-white) !important;
+}
+.nut-dashboard-shell .nut-metric-grid > div:last-child * { color: inherit !important; }
+.nut-dashboard-shell .nut-metric-grid .rounded-xl { border-radius: 6px !important; }
+
+.nut-dashboard-shell .nut-content-card { margin-top: 0 !important; padding: 22px !important; }
+.nut-dashboard-shell .nut-view-panel { border-radius: 8px !important; }
+
+.nut-dashboard-shell button[class*="bg-[#0f766e]"],
+.nut-dashboard-shell button[class*="from-[#0f766e]"] {
+  border-color: var(--nut-accent) !important;
+  border-radius: 7px !important;
+  background: var(--nut-accent) !important;
+  background-image: none !important;
+  color: var(--nut-ink) !important;
+  box-shadow: none !important;
+}
+
+.nut-dashboard-shell input,
+.nut-dashboard-shell select,
+.nut-dashboard-shell textarea { border-radius: 7px !important; }
+.nut-dashboard-shell table { color: var(--nut-ink); }
+.nut-dashboard-shell thead { background: #edf3f4 !important; }
+.nut-dashboard-shell th { color: #496173 !important; font-size: 11px !important; }
+.nut-dashboard-shell tbody tr:hover { background: #f3fbfb !important; }
+
+.nut-dashboard-shell .nut-shell-footer {
+  margin: 0 0 0 276px !important;
+  border-color: var(--nut-line) !important;
+  background: var(--nut-white) !important;
+}
+
+.nut-mobile-menu {
+  display: none;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background: var(--nut-primary);
+  color: var(--nut-white);
+  font-size: 21px;
+}
+
+@media (max-width: 860px) {
+  .nut-dashboard-shell .nut-shell-header {
+    inset: 0 0 auto 0 !important;
+    width: 100% !important;
+    height: 72px !important;
+    border-radius: 0 !important;
+    overflow: visible;
+  }
+  .nut-dashboard-shell .nut-shell-header > div {
+    height: 72px !important;
+    padding: 11px 16px !important;
+    align-items: center !important;
+  }
+  .nut-dashboard-shell .nut-shell-header img { width: 38px !important; height: 38px !important; }
+  .nut-dashboard-shell .nut-shell-header .leading-tight > div:first-child { max-width: 220px; font-size: 13px !important; }
+  .nut-dashboard-shell .nut-shell-header .leading-tight > div:last-child { display: none; }
+  .nut-dashboard-shell .nut-header-actions button { display: none !important; }
+  .nut-mobile-menu { display: inline-flex; margin-left: auto; }
+  .nut-dashboard-shell .nut-side-nav {
+    left: 0;
+    top: 72px;
+    width: min(84vw, 290px);
+    max-height: calc(100vh - 72px);
+    padding: 18px !important;
+    border-radius: 0 0 16px 0;
+    background: var(--nut-primary);
+    box-shadow: 12px 18px 35px rgba(11, 39, 66, 0.22);
+    transform: translateX(-105%);
+    transition: transform 180ms ease;
+  }
+  .nut-nav-open .nut-side-nav { transform: translateX(0); }
+  .nut-dashboard-shell .nut-shell-main {
+    min-height: 100vh;
+    margin: 0 !important;
+    padding: 100px 16px 38px !important;
+  }
+  .nut-dashboard-shell .nut-shell-footer { margin-left: 0 !important; }
+  .nut-dashboard-shell .nut-view-heading { grid-template-columns: minmax(0, 1fr) !important; }
+  .nut-dashboard-shell .nut-view-heading h1,
+  .nut-dashboard-shell .nut-view-heading h2,
+  .nut-dashboard-shell .nut-content-card > div:first-child > h2 { font-size: 25px !important; }
+  .nut-dashboard-shell .nut-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .nut-dashboard-shell .nut-content-card { padding: 16px !important; overflow: hidden; }
+  .nut-dashboard-shell .nut-content-card table { min-width: 720px; }
+}
+
+@media (max-width: 520px) {
+  .nut-dashboard-shell .nut-shell-header .leading-tight > div:first-child { max-width: 170px; }
+  .nut-dashboard-shell .nut-metric-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  .nut-dashboard-shell .nut-metric-grid > div { min-height: 126px; }
+  .nut-dashboard-shell .nut-view-heading > div:last-child { width: 100%; }
+  .nut-dashboard-shell .nut-view-heading > div:last-child button { flex: 1 1 auto; }
+  .nut-dashboard-shell .nut-shell-footer > div { height: auto !important; padding: 16px !important; gap: 8px; flex-direction: column; align-items: flex-start !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nut-dashboard-shell .nut-side-nav { transition: none; }
+}
