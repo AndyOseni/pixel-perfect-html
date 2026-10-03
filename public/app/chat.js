@@ -3,8 +3,8 @@
    can respond in real time. Backed by Lovable Cloud (chat_messages table). */
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-const CHAT_URL = "https://urvgfaparanfrzwbaerl.supabase.co";
-const CHAT_KEY = "sb_publishable_SMw8GXgXF2eyWQgI9SHNuw_IA-khkBz";
+const CHAT_URL = "https://toccfmjgrctmxswephwf.supabase.co";
+const CHAT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRvY2NmbWpncmN0bXhzd2VwaHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2Nzk1ODYsImV4cCI6MjEwMTI1NTU4Nn0.sQPD4zjCzTkK8TMQOOi__z7Y4We0i4Gq9l56cJi_CP4";
 const db = createClient(CHAT_URL, CHAT_KEY, { auth: { persistSession: false } });
 
 /* TODO: deploy chat-get-messages / chat-send-message edge functions, then route this

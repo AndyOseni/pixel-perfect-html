@@ -292,6 +292,7 @@ export type Database = {
           outstanding: number | null
           payslip_data_url: string | null
           payslip_name: string | null
+          payslip_path: string | null
           payslip_size: number | null
           payslip_type: string | null
           principal: number
@@ -312,6 +313,7 @@ export type Database = {
           outstanding?: number | null
           payslip_data_url?: string | null
           payslip_name?: string | null
+          payslip_path?: string | null
           payslip_size?: number | null
           payslip_type?: string | null
           principal: number
@@ -332,6 +334,7 @@ export type Database = {
           outstanding?: number | null
           payslip_data_url?: string | null
           payslip_name?: string | null
+          payslip_path?: string | null
           payslip_size?: number | null
           payslip_type?: string | null
           principal?: number
@@ -387,6 +390,7 @@ export type Database = {
           payslip_data_url: string | null
           payslip_date: string | null
           payslip_name: string | null
+          payslip_path: string | null
           payslip_size: number | null
           payslip_type: string | null
           phone: string | null
@@ -408,6 +412,7 @@ export type Database = {
           payslip_data_url?: string | null
           payslip_date?: string | null
           payslip_name?: string | null
+          payslip_path?: string | null
           payslip_size?: number | null
           payslip_type?: string | null
           phone?: string | null
@@ -429,6 +434,7 @@ export type Database = {
           payslip_data_url?: string | null
           payslip_date?: string | null
           payslip_name?: string | null
+          payslip_path?: string | null
           payslip_size?: number | null
           payslip_type?: string | null
           phone?: string | null
