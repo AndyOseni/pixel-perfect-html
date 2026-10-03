@@ -1,0 +1,11 @@
+ALTER TABLE public.commodity_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.commodity_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.guarantor_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.login_attempts ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow all for anon" ON public.activity_logs;
+DROP POLICY IF EXISTS "Allow all for anon" ON public.commodities;
+DROP POLICY IF EXISTS "Allow all for anon" ON public.commodity_orders;
+DROP POLICY IF EXISTS "Allow all for anon" ON public.loans;
+DROP POLICY IF EXISTS "Allow all for anon" ON public.savings;
+DROP POLICY IF EXISTS "Allow all for anon" ON public.savings_history;
+GRANT ALL ON public.commodity_items, public.commodity_requests, public.guarantor_requests, public.login_attempts, public.activity_logs, public.commodities, public.commodity_orders, public.loans, public.savings, public.savings_history TO service_role;
