@@ -258,12 +258,18 @@
   .nut-dashboard-shell .nut-shell-header .leading-tight > div:first-child { max-width: 220px; font-size: 13px !important; }
   .nut-dashboard-shell .nut-shell-header .leading-tight > div:last-child { display: none; }
   .nut-dashboard-shell .nut-header-actions button { display: none !important; }
+  .nut-nav-open .nut-header-actions button {
+    display: inline-flex !important;
+    left: 18px;
+    bottom: 16px;
+    width: min(calc(84vw - 36px), 254px);
+  }
   .nut-mobile-menu { display: inline-flex; margin-left: auto; }
   .nut-dashboard-shell .nut-side-nav {
     left: 0;
     top: 72px;
     width: min(84vw, 290px);
-    max-height: calc(100vh - 72px);
+    max-height: calc(100dvh - 156px);
     padding: 18px !important;
     border-radius: 0 0 16px 0;
     background: var(--nut-primary);
