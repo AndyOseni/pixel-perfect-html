@@ -111,21 +111,40 @@
     inner.appendChild(button);
   }
 
+  function closeMobileMenu() {
+    document.body.classList.remove("nut-nav-open");
+    var button = document.querySelector(".nut-mobile-menu");
+    if (button) {
+      button.setAttribute("aria-expanded", "false");
+      button.textContent = "☰";
+    }
+  }
+
+  function clearDashboard() {
+    closeMobileMenu();
+    var classes = ["nut-dashboard-shell", "nut-shell-header", "nut-shell-main", "nut-shell-footer", "nut-header-actions", "nut-side-nav", "nut-active-nav", "nut-view-heading", "nut-content-card", "nut-metric-grid", "nut-view-panel"];
+    classes.forEach(function (name) {
+      document.querySelectorAll("." + name).forEach(function (element) { element.classList.remove(name); });
+    });
+    document.querySelectorAll(".nut-mobile-menu, .nut-page-kicker, .nut-nav-icon").forEach(function (element) { element.remove(); });
+    closeMessages();
+  }
+
   function decorateDashboard() {
     var root = document.querySelector("#root > div");
     if (!root) return;
     var header = root.querySelector(":scope > header");
     var main = root.querySelector(":scope > div.max-w-\\[1320px\\]");
     var footer = root.querySelector(":scope > footer");
-    if (!header || !main || !main.querySelector("button")) return;
+    if (!header || !main || !main.querySelector("button")) { clearDashboard(); return; }
 
     var logout = Array.prototype.filter.call(header.querySelectorAll("button"), function (b) {
       return b.textContent.trim() === "Logout";
     })[0];
-    if (!logout) return;
+    if (!logout || loginPills()) { clearDashboard(); return; }
 
     var nav = MEMBER ? memberNav() : main.firstElementChild;
-    if (!nav || nav.querySelectorAll(":scope > button").length < 4) return;
+    if (!nav || nav.querySelectorAll(":scope > button").length < 4) { clearDashboard(); return; }
 
     root.classList.add("nut-dashboard-shell");
     header.classList.add("nut-shell-header");
@@ -141,7 +160,7 @@
       if (button.dataset.nutBound) return;
       button.dataset.nutBound = "1";
       button.addEventListener("click", function () {
-        document.body.classList.remove("nut-nav-open");
+        closeMobileMenu();
         setTimeout(function () { activeNav(nav); decorateDashboard(); }, 0);
       });
     });
@@ -164,7 +183,12 @@
       if (children[0]) {
         children[0].classList.add("nut-content-card");
         var cardHead = children[0].firstElementChild;
-        if (cardHead) cardHead.classList.add("nut-view-heading");
+        // Some views start with an entire panel, not a heading row.
+        if (cardHead && cardHead.querySelector(":scope > h1, :scope > h2, :scope > div > h1, :scope > div > h2")) {
+          cardHead.classList.add("nut-view-heading");
+        } else if (cardHead) {
+          cardHead.classList.remove("nut-view-heading");
+        }
       }
     }
   }
@@ -211,7 +235,7 @@
     return Array.prototype.filter.call(document.querySelectorAll("div.flex.gap-2"), function (d) {
       var b = d.querySelectorAll(":scope > button");
       if (b.length < 4) return false;
-      var labels = Array.prototype.map.call(b, function (x) { return x.textContent.trim(); });
+      var labels = Array.prototype.map.call(b, navLabel);
       return labels.indexOf("Overview") === 0 && labels.indexOf("Savings History") === 1;
     })[0];
   }

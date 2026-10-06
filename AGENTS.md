@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Extend the legacy prebundled portal through progressive DOM decoration and scoped CSS, because its authored React source is not present.
+- Apply dashboard decoration only while the rendered portal has a signed-in navigation and Logout control; remove all shell decoration on auth views because React reuses header and root nodes.
