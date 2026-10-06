@@ -52,7 +52,7 @@
   style.textContent = '[data-nut-portal] .nut-hide{display:none !important}';
   document.head.appendChild(style);
 
-  var TEAL = "#0f766e";
+  var TEAL = "#00D9D2";
   var MEMBER = MODE === "member";
 
   var dashboardCss = document.createElement("link");
