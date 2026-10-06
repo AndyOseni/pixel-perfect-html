@@ -6,9 +6,14 @@
   --nut-line: #dfe7e9;
   --nut-muted: #60717f;
   --nut-white: #ffffff;
+  --nut-sidebar-width: 280px;
 }
 
 .nut-dashboard-shell {
+  display: flex !important;
+  flex-flow: row wrap !important;
+  align-content: flex-start;
+  min-width: 0;
   min-height: 100vh !important;
   background: var(--nut-canvas) !important;
   color: var(--nut-ink) !important;
@@ -17,8 +22,9 @@
 .nut-dashboard-shell .nut-shell-header {
   position: fixed !important;
   inset: 0 auto 0 0 !important;
-  z-index: 35 !important;
-  width: 276px !important;
+  z-index: 20 !important;
+  width: var(--nut-sidebar-width) !important;
+  flex: 0 0 var(--nut-sidebar-width);
   height: 100vh !important;
   border: 0 !important;
   border-radius: 0 24px 24px 0;
@@ -64,7 +70,7 @@
   position: fixed !important;
   left: 28px;
   bottom: 28px;
-  z-index: 38;
+  z-index: 22;
   width: 220px;
   justify-content: flex-start !important;
   padding: 11px 14px !important;
@@ -76,10 +82,12 @@
 }
 
 .nut-dashboard-shell .nut-shell-main {
-  width: auto !important;
+  flex: 1 1 calc(100% - var(--nut-sidebar-width));
+  width: calc(100% - var(--nut-sidebar-width)) !important;
+  min-width: 0 !important;
   max-width: none !important;
   min-height: calc(100vh - 58px);
-  margin: 0 0 0 276px !important;
+  margin: 0 0 0 var(--nut-sidebar-width) !important;
   padding: 34px 36px 48px !important;
 }
 
@@ -87,9 +95,9 @@
   position: fixed !important;
   left: 20px;
   top: 142px;
-  z-index: 37;
+  z-index: 21;
   display: flex !important;
-  width: 236px;
+  width: calc(var(--nut-sidebar-width) - 40px);
   max-height: calc(100vh - 232px);
   margin: 0 !important;
   padding: 0 !important;
@@ -188,6 +196,11 @@
 .nut-dashboard-shell .nut-content-card { margin-top: 0 !important; padding: 22px !important; }
 .nut-dashboard-shell .nut-view-panel { border-radius: 8px !important; }
 
+.nut-dashboard-shell .nut-shell-main > :not(.nut-side-nav) { min-width: 0; max-width: 100%; }
+.nut-dashboard-shell .nut-view-heading > * { min-width: 0; }
+.nut-dashboard-shell .nut-shell-main .overflow-x-auto { max-width: 100%; overflow-x: auto !important; }
+.nut-dashboard-shell .nut-side-nav > button { flex-shrink: 0; }
+
 .nut-dashboard-shell button[class*="bg-[#0f766e]"],
 .nut-dashboard-shell button[class*="from-[#0f766e]"] {
   border-color: var(--nut-accent) !important;
@@ -207,7 +220,10 @@
 .nut-dashboard-shell tbody tr:hover { background: #f3fbfb !important; }
 
 .nut-dashboard-shell .nut-shell-footer {
-  margin: 0 0 0 276px !important;
+  flex: 1 1 calc(100% - var(--nut-sidebar-width));
+  width: calc(100% - var(--nut-sidebar-width));
+  min-width: 0;
+  margin: 0 0 0 var(--nut-sidebar-width) !important;
   border-color: var(--nut-line) !important;
   background: var(--nut-white) !important;
 }
@@ -225,6 +241,7 @@
 }
 
 @media (max-width: 860px) {
+  .nut-dashboard-shell { display: flex !important; flex-direction: column !important; }
   .nut-dashboard-shell .nut-shell-header {
     inset: 0 0 auto 0 !important;
     width: 100% !important;
@@ -251,16 +268,20 @@
     border-radius: 0 0 16px 0;
     background: var(--nut-primary);
     box-shadow: 12px 18px 35px rgba(11, 39, 66, 0.22);
+    visibility: hidden;
+    pointer-events: none;
     transform: translateX(-105%);
     transition: transform 180ms ease;
   }
-  .nut-nav-open .nut-side-nav { transform: translateX(0); }
+  .nut-nav-open .nut-side-nav { transform: translateX(0); visibility: visible; pointer-events: auto; }
   .nut-dashboard-shell .nut-shell-main {
     min-height: 100vh;
+    flex: 1 1 auto;
+    width: 100% !important;
     margin: 0 !important;
     padding: 100px 16px 38px !important;
   }
-  .nut-dashboard-shell .nut-shell-footer { margin-left: 0 !important; }
+  .nut-dashboard-shell .nut-shell-footer { flex: 0 0 auto; width: 100%; margin-left: 0 !important; }
   .nut-dashboard-shell .nut-view-heading { grid-template-columns: minmax(0, 1fr) !important; }
   .nut-dashboard-shell .nut-view-heading h1,
   .nut-dashboard-shell .nut-view-heading h2,
