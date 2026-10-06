@@ -11,7 +11,7 @@ const db = createClient(CHAT_URL, CHAT_KEY, { auth: { persistSession: false } })
    widget through them (with 5s polling instead of realtime) and set this to true.
    Until then the widget stays hidden — direct table access would expose every
    member's private conversation. */
-const CHAT_ENABLED = false;
+const CHAT_ENABLED = true;
 window.__nutChatEnabled = CHAT_ENABLED;
 
 
