@@ -97,13 +97,23 @@
   top: 142px;
   z-index: 21;
   display: flex !important;
+  flex-flow: column nowrap !important;
   width: calc(var(--nut-sidebar-width) - 40px);
   max-height: calc(100vh - 232px);
   margin: 0 !important;
   padding: 0 !important;
-  flex-direction: column;
   gap: 5px !important;
-  overflow: auto !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+}
+
+.nut-dashboard-shell .nut-side-nav::-webkit-scrollbar { width: 6px; }
+.nut-dashboard-shell .nut-side-nav::-webkit-scrollbar-track { background: transparent; }
+.nut-dashboard-shell .nut-side-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
 }
 
 .nut-dashboard-shell .nut-side-nav::before {
